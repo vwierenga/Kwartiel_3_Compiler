@@ -1,0 +1,26 @@
+; = over
+If = Verify
+True = Affirmative
+False = Negative
+Else = WRONG
+
+Gebruikersinvoer gereed = Ready to Copy
+Gebruikersinvoer correct = Wilco
+Gebruikersinvoer incorrect = Say again
+
+int = Falcon
+string = Message
+
+Crash = Mayday, Mayday, Mayday,
+
+Begin = This is <programmanaam> , over
+End = Over and Out
+
+Writeout = Say
+
+While = Execute ALL BEFORE (iets = waarde)
+
+GET = Obtain
+
+Function = ROUTINE
+Return = Dispatch
