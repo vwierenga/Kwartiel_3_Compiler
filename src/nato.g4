@@ -4,6 +4,15 @@ program: 'this is ' MESSAGE ENDL  statement+ 'over and out';
 
 statement: 'say ' MESSAGE+ ENDL;
 
+expression:	'('	expression	')'                                                 #parentExpression
+		    |	'-'	expression                                                  #minusExpression
+		    |	leftExpr=expression	op=('*'	|	'/')	rightExpr=expression    #multiExpression
+		    |	leftExpr=expression	op=('+'	|	'-')	rightExpr=expression    #subExpression
+		    |   leftExpr=expression	('%')	rightExpr=expression                #modExpression
+   		    |	INT                                                             #intExpression
+		;
+
+
 ifStmt: 'verify' ('wrong')? ;
 
 
