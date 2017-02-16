@@ -1,13 +1,17 @@
 grammar nato;
 
-program: 'this is ' message ENDL  statement+ 'over and out';
+program: 'this is ' MESSAGE ENDL  statement+ 'over and out';
 
-statement: ENDL;
+statement: 'say ' MESSAGE+ ENDL;
+
 ifStmt: 'verify' ('wrong')? ;
+
 
 ENDL: 'over';
 FALCON: [0-9]+;
-MESSAGE: [A-Za-z]+
+MESSAGE: [A-Za-z]+;
+CONFIRM: 'TRUE' | 'FALSE';
+WS: ' '+ -> skip;
 
 
 /*
