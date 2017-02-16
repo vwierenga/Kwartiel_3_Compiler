@@ -40,8 +40,7 @@ ENDL: 'over';
 FALCON: [0-9]+;
 MESSAGE: [A-Za-z]+;
 CONFIRM: 'TRUE' | 'FALSE';
-WS: ' '+ -> skip;
-ENTER: '/n'+ -> skip;
+WS: [ \t\r\n]+ -> skip;
 
 
 /*
