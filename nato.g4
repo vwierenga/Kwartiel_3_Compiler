@@ -1,49 +1,51 @@
 grammar nato;
 
-program: 'this is ' MESSAGE ENDL  statement+ 'over and out';
+program: 'this is ' MESSAGE ENDL (statement ENDL)+ 'over and out';
 
-statement: 'say ' MESSAGE+ ENDL
-           | 'falcon ' MESSAGE expression+ ENDL
-           | 'message ' MESSAGE MESSAGE+ ENDL
-           | 'confirm ' MESSAGE CONFIRM ENDL
-           | ifStmt
-           | whileStmt
-           | functionStmt
-           | copyStmt
-           | operationStmt
+statement: 'say ' MESSAGE+
+           | type MESSAGE ('<-' expression+)?   #varDecAndInit
+           | MESSAGE '<-' expression+           #varAssignment
+           | ifStmt                             #ifStatement
+           | whileStmt                          #whileStatement
+           | functionStmt                       #functionStatement
+           | copyStmt                           #copyStatement
+           | operationStmt                      #operationStatement
            ;
 
-ifStmt: 'verify ' logicalExpression ENDL statement+ ('wrong ' statement+)? 'endVerify ' ENDL;
+ifStmt: 'verify ' logicalExpression ENDL statement+ ('wrong ' statement+)? 'endVerify ';
 
-whileStmt: 'execute all before ' logicalExpression ENDL statement+ 'endExecute ' ENDL;
+whileStmt: 'execute all before ' logicalExpression ENDL statement+ 'endExecute ';
 
-functionStmt: 'operation ' MESSAGE ((('falcon ' | 'message ' | 'confirm ') MESSAGE)+)? ENDL statement+ ('payload = ' (FALCON | MESSAGE | CONFIRM) ENDL)?  'endOperation ' ENDL;
+functionStmt: 'operation ' MESSAGE ((type MESSAGE)+)? ENDL statement+ ('payload = ' (type) ENDL)?  'endOperation ';
 
-operationStmt: ('falcon ' MESSAGE | 'message ' MESSAGE | 'confirm ' MESSAGE)? 'start operation ' MESSAGE ENDL;
+operationStmt: (type MESSAGE)? 'start operation ' MESSAGE;
 
-copyStmt: ('falcon ' | 'message ' | 'confirm ') MESSAGE 'copy' ENDL
-        | 'copy' ENDL
+copyStmt: (type) MESSAGE 'copy'
+        | 'copy'
         ;
 
+type : ('falcon' | 'message' | 'confirm');
 expression:	'('	expression	')'                                                 #parentExpression
 		    |	'-'	expression                                                  #minusExpression
 		    |	leftExpr=expression	op=('*'	|	'/')	rightExpr=expression    #multiExpression
 		    |	leftExpr=expression	op=('+'	|	'-')	rightExpr=expression    #subExpression
 		    |   leftExpr=expression	('%')	rightExpr=expression                #modExpression
    		    |	FALCON                                                          #intExpression
+   		    |   MESSAGE                                                         #messageExpression
+   		    |   CONFIRM                                                         #confirmExpression
 		    ;
 
-logicalExpression: expression ('!'? ('<' | '<=' | '=' | '>=' | '>')) expression
-                   | logicalExpression 'OR' logicalExpression
-                   | logicalExpression 'END' logicalExpression
-                   | logicalExpression 'NOT' logicalExpression
+logicalExpression: leftExpr=expression (not='!'? op=('<' | '<=' | '=' | '>=' | '>')) rightExpr=expression   #parentLogicalExpresssion
+                   | leftLogicExpr=logicalExpression op='OR' rightLogicalExpr=logicalExpression             #orLogicalExpression
+                   | leftLogicalExpr=logicalExpression op='AND' rightLogicalExpr=logicalExpression          #andLogicalExpression
+                   | leftLogicalExpr=logicalExpression op='NOT' rightLogicalExpr=logicalExpression          #notLogicalExpression
                    ;
 
 
 ENDL: 'over';
 FALCON: [0-9]+;
 MESSAGE: [A-Za-z]+;
-CONFIRM: 'TRUE' | 'FALSE';
+CONFIRM: 'AFFIRMATIVE' | 'NEGATIVE';
 WS: [ \t\r\n]+ -> skip;
 
 
