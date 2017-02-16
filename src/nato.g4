@@ -10,13 +10,16 @@ statement: 'say ' MESSAGE+ ENDL
            | whileStmt
            | functionStmt
            | MESSAGE 'copy' ENDL
+           | operationStmt
            ;
 
-ifStmt: 'verify ' logicalExpression statement+ ENDL ('wrong ' statement+)? 'endVerify ' ENDL;
+ifStmt: 'verify ' logicalExpression ENDL statement+ ('wrong ' statement+)? 'endVerify ' ENDL;
 
 whileStmt: 'execute all before ' logicalExpression ENDL statement+ 'endExecute ' ENDL;
 
-functionStmt: 'operation ' MESSAGE ((DATATYPE MESSAGE)+)? ENDL statement+ ('payload = ' (FALCON | MESSAGE | CONFIRM) ENDL)?  'endOperation ' ENDL;
+functionStmt: 'operation ' MESSAGE ((('falcon ' | 'message ' | 'confirm ') MESSAGE)+)? ENDL statement+ ('payload = ' (FALCON | MESSAGE | CONFIRM) ENDL)?  'endOperation ' ENDL;
+
+operationStmt: ('falcon ' MESSAGE | 'message ' MESSAGE | 'confirm ' MESSAGE)? 'start operation ' MESSAGE ENDL;
 
 expression:	'('	expression	')'                                                 #parentExpression
 		    |	'-'	expression                                                  #minusExpression
@@ -37,7 +40,6 @@ ENDL: 'over';
 FALCON: [0-9]+;
 MESSAGE: [A-Za-z]+;
 CONFIRM: 'TRUE' | 'FALSE';
-DATATYPE: 'falcon' | 'message' | 'confirm';
 WS: ' '+ -> skip;
 ENTER: '/n'+ -> skip;
 
