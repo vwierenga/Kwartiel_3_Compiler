@@ -9,7 +9,7 @@ statement: 'say ' MESSAGE+ ENDL
            | ifStmt
            | whileStmt
            | functionStmt
-           | MESSAGE 'copy' ENDL
+           | copyStmt
            | operationStmt
            ;
 
@@ -20,6 +20,10 @@ whileStmt: 'execute all before ' logicalExpression ENDL statement+ 'endExecute '
 functionStmt: 'operation ' MESSAGE ((('falcon ' | 'message ' | 'confirm ') MESSAGE)+)? ENDL statement+ ('payload = ' (FALCON | MESSAGE | CONFIRM) ENDL)?  'endOperation ' ENDL;
 
 operationStmt: ('falcon ' MESSAGE | 'message ' MESSAGE | 'confirm ' MESSAGE)? 'start operation ' MESSAGE ENDL;
+
+copyStmt: ('falcon ' | 'message ' | 'confirm ') MESSAGE 'copy' ENDL
+        | 'copy' ENDL
+        ;
 
 expression:	'('	expression	')'                                                 #parentExpression
 		    |	'-'	expression                                                  #minusExpression
