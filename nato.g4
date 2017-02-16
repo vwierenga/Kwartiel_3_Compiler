@@ -26,7 +26,7 @@ expression:	'('	expression	')'                                                 #
 		    |	leftExpr=expression	op=('*'	|	'/')	rightExpr=expression    #multiExpression
 		    |	leftExpr=expression	op=('+'	|	'-')	rightExpr=expression    #subExpression
 		    |   leftExpr=expression	('%')	rightExpr=expression                #modExpression
-   		    |	FALCON                                                             #intExpression
+   		    |	FALCON                                                          #intExpression
 		    ;
 
 logicalExpression: expression ('!'? ('<' | '<=' | '=' | '>=' | '>')) expression
