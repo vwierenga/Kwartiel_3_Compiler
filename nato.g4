@@ -12,11 +12,11 @@ statement: 'say ' MESSAGE+                      #printStatement
            | operationStmt                      #operationStatement
            ;
 
-ifStmt: 'verify ' logicalExpression ENDL statement+ ('wrong ' statement+)? 'endVerify ';
+ifStmt: 'verify ' logicalExpression ENDL (statement ENDL)+ ('wrong ' statement+)? 'endVerify ';
 
-whileStmt: 'execute all before ' logicalExpression ENDL statement+ 'endExecute ';
+whileStmt: 'execute all before ' logicalExpression ENDL (statement ENDL)+ 'endExecute ';
 
-functionStmt: 'operation ' MESSAGE ((type MESSAGE)+)? ENDL statement+ ('payload = ' (type) ENDL)?  'endOperation ';
+functionStmt: 'operation ' MESSAGE ((type MESSAGE)+)? ENDL (statement ENDL)+ ('payload = ' (type) ENDL)?  'endOperation ';
 
 operationStmt: (type MESSAGE)? 'start operation ' MESSAGE;
 

@@ -5,13 +5,13 @@ verify 1 < 2 OR 2 !< 3 over
 endVerify over
 
 execute all before 1 < 2 over
-    falcon testy 1 - 2 over
+    falcon testy <- 1 - 2 over
     say testy over
 endExecute over
 
 operation mango falcon variablenameone message twelve over
     say nothing over
-    payload = TRUE over
+    payload <- TRUE over
 endOperation over
 
 start operation mango over
