@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by Laptop-oud on 16-2-2017.
  */
@@ -21,8 +18,13 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitVarDecAndInit(natoParser.VarDecAndInitContext ctx) {
+        Scope.getInstance();
         if(ctx.type().getText().equals("falcon")){
-            System.out.println("type is falcon");
+
+        } else if (ctx.type().getText().equals("message")){
+
+        } else if (ctx.type().getText().equals("confirm")){
+
         }
 
         return super.visitVarDecAndInit(ctx);
