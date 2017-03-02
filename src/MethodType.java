@@ -3,7 +3,7 @@ import java.util.ArrayList;
 /**
  * Created by Vincent on 3/2/2017.
  */
-public class MethodType {
+public class MethodType extends Type {
     DataType returnType;
     ArrayList<DataType> parameters = new ArrayList<>();
 
