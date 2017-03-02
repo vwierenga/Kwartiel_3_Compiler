@@ -13,7 +13,11 @@ public class Compiler {
             natoLexer lexer = new natoLexer(new ANTLRFileStream("natoSrc/program.nato"));
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             natoParser parser = new natoParser(tokens);
-            natoParser.ProgramContext programtree = parser.program();
+            natoParser.ProgramContext programTree = parser.program();
+
+            Checker checker = new Checker();
+
+            checker.visit(programTree);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -7,7 +7,6 @@ import java.util.Map;
 public class Checker extends natoBaseVisitor<Type>{
 
 // override methods
-    private Map<String, Type> memory = new HashMap<String, Type>();
 
 
     @Override
@@ -22,7 +21,10 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitVarDecAndInit(natoParser.VarDecAndInitContext ctx) {
-        String name = ctx.getText();
+        if(ctx.type().getText().equals("falcon")){
+            System.out.println("type is falcon");
+        }
+
         return super.visitVarDecAndInit(ctx);
     }
 
