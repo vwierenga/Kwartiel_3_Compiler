@@ -2,7 +2,7 @@ grammar nato;
 
 program: 'this is ' MESSAGE ENDL (statement ENDL)+ 'over and out';
 
-statement: 'say ' MESSAGE+
+statement: 'say ' MESSAGE+                      #printStatement
            | type MESSAGE ('<-' expression+)?   #varDecAndInit
            | MESSAGE '<-' expression+           #varAssignment
            | ifStmt                             #ifStatement
