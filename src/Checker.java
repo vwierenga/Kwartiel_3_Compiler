@@ -5,6 +5,10 @@ public class Checker extends natoBaseVisitor<Type>{
 
 // override methods
 
+    public enum type {
+        MESSAGE, CONFIRM, FALCON
+    }
+
 
     @Override
     public Type visitProgram(natoParser.ProgramContext ctx) {
@@ -102,7 +106,15 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitIntExpression(natoParser.IntExpressionContext ctx) {
-        return super.visitIntExpression(ctx);
+        try {
+            int testy = Integer.parseInt(ctx.FALCON().getText());
+            System.out.println("Falcon: " + testy);
+        } catch (NumberFormatException e){
+            //TODO: Throw exception
+            return null;
+        }
+
+        return new DataType(2);
     }
 
     @Override
@@ -140,7 +152,16 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitSubExpression(natoParser.SubExpressionContext ctx) {
-        return super.visitSubExpression(ctx);
+        //System.out.println( ctx.leftExpr.getClass().toString());
+        Type left = visit(ctx.leftExpr);
+        Type right = visit(ctx.rightExpr);
+
+        if (!(ctx.op.getText().equals("-") || left == null || right == null)){
+            //TODO: Throw Exception
+            return null;
+        }
+
+        return new DataType(3);
     }
 
     @Override
