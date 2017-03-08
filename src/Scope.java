@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -56,9 +58,19 @@ public class Scope {
         return method;
     }
 
-    public Symbol declareVariable(String name, DataType returnType) {
+    public Symbol declareVariable(String name, DataType type) {
+        Symbol symbol = new Symbol(name, type);
         if (this.lookupVariable(name) == null) {
-            symbolTable.put(name, new Symbol())
+            symbolTable.put(name, symbol);
         }
+        return symbol;
+    }
+
+    public Symbol declareMethod(String name, DataType returnType, ArrayList<DataType> parameters){
+        Symbol symbol = new Symbol(name, new MethodType(returnType, parameters));
+        if (this.lookupMethod(name) == null) {
+            symbolTable.put(name, symbol);
+        }
+        return symbol;
     }
 }

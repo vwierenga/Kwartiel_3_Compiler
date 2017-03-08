@@ -7,4 +7,8 @@ public class DataType extends Type {
     }
 
     int type;
+
+    public DataType(int type) {
+        this.type = type;
+    }
 }
