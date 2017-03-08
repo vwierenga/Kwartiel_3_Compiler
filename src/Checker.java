@@ -112,12 +112,30 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitMultiExpression(natoParser.MultiExpressionContext ctx) {
-        return super.visitMultiExpression(ctx);
+        Type x = visit(ctx.leftExpr);
+        Type y = visit(ctx.rightExpr);
+
+        String mod = ctx.op.getText();
+        if (x.getClass().toString().equals("Falcon") && y.getClass().toString().equals("Falcon")) {
+            return super.visitMultiExpression(ctx);
+        }
+        else {
+            throw new RuntimeException();
+        }
     }
 
     @Override
     public Type visitModExpression(natoParser.ModExpressionContext ctx) {
-        return super.visitModExpression(ctx);
+        Type x = visit(ctx.leftExpr);
+        Type y = visit(ctx.rightExpr);
+
+        if (x.getClass().toString().equals("Falcon") && y.getClass().toString().equals("Falcon")) {
+            return super.visitModExpression(ctx);
+        }
+        else {
+            throw new RuntimeException();
+        }
+
     }
 
     @Override
