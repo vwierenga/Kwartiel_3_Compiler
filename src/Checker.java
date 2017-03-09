@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  * Created by Laptop-oud on 16-2-2017.
  */
-public class Checker extends natoBaseVisitor<Type>{
+public class Checker extends natoBaseVisitor<Type> {
 
 // override methods
 
@@ -24,8 +24,8 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitPrintStatement(natoParser.PrintStatementContext ctx) {
-        if (ctx.MESSAGE() != null){
-            for (TerminalNode node : ctx.MESSAGE()){
+        if (ctx.MESSAGE() != null) {
+            for (TerminalNode node : ctx.MESSAGE()) {
 
             }
         } else {
@@ -41,20 +41,20 @@ public class Checker extends natoBaseVisitor<Type>{
         DataType dataType = null;
         String variableName = ctx.MESSAGE().getText();
 
-        if (ctx.type().getText().equals("message")){
+        if (ctx.type().getText().equals("message")) {
             dataType = new DataType(0);
-        } else if (ctx.type().getText().equals("confirm")){
+        } else if (ctx.type().getText().equals("confirm")) {
             dataType = new DataType(1);
-        } else if(ctx.type().getText().equals("falcon")) {
+        } else if (ctx.type().getText().equals("falcon")) {
             dataType = new DataType(2);
         } else {
             //TODO: Throw error
             return null;
         }
 
-        if(ctx.expr != null){
+        if (ctx.expr != null) {
             DataType expressionDataType = (DataType) visit(ctx.expr);
-            if (expressionDataType.getType() != dataType.getType()){
+            if (expressionDataType.getType() != dataType.getType()) {
                 //TODO: Throw exception datatypes don't match
             }
         }
@@ -71,7 +71,7 @@ public class Checker extends natoBaseVisitor<Type>{
         Type expr = visit(ctx.expr);
         Symbol var = scope.lookupVariable(msg);
 
-        if (var == null){
+        if (var == null) {
             //TODO: Throw exception
             return null;
         }
@@ -128,11 +128,11 @@ public class Checker extends natoBaseVisitor<Type>{
         Type logicalExpression = visit(ctx.logicalExpression());
         Type ifstmtCode = visit(ctx.ifCode);
 
-        if (logicalExpression == null || ifstmtCode == null){
+        if (logicalExpression == null || ifstmtCode == null) {
             return null;
         }
 
-        if(ctx.elseCode != null){
+        if (ctx.elseCode != null) {
             System.out.println("else code exists");
             Type elsestmtCode = visit(ctx.elseCode);
         } else {
@@ -160,18 +160,18 @@ public class Checker extends natoBaseVisitor<Type>{
     @Override
     public Type visitFunctionStmt(natoParser.FunctionStmtContext ctx) {
 
-        if(ctx.operationName == null){
+        if (ctx.operationName == null) {
             return null;
             //TODO: Throw Exception
         }
 
         DataType payloadType = null;
         if (ctx.payloadType != null) {
-            if (ctx.payloadType.getText().equals("message")){
+            if (ctx.payloadType.getText().equals("message")) {
                 payloadType = new DataType(0);
-            } else if(ctx.payloadType.getText().equals("confirm")){
+            } else if (ctx.payloadType.getText().equals("confirm")) {
                 payloadType = new DataType(1);
-            } else if(ctx.payloadType.getText().equals("falcon")){
+            } else if (ctx.payloadType.getText().equals("falcon")) {
                 payloadType = new DataType(2);
             } else {
                 //TODO: Throw Exception
@@ -184,13 +184,13 @@ public class Checker extends natoBaseVisitor<Type>{
 
         ArrayList<DataType> parameterTypes = new ArrayList<>();
 
-        for (natoParser.TypeContext typeContext : ctx.operationParameters().type()){
+        for (natoParser.TypeContext typeContext : ctx.operationParameters().type()) {
             DataType parameterType = null;
-            if (typeContext.getText().equals("message")){
+            if (typeContext.getText().equals("message")) {
                 parameterType = new DataType(0);
-            } else if(typeContext.getText().equals("confirm")){
+            } else if (typeContext.getText().equals("confirm")) {
                 parameterType = new DataType(1);
-            } else if(typeContext.getText().equals("falcon")){
+            } else if (typeContext.getText().equals("falcon")) {
                 parameterType = new DataType(2);
             } else {
                 //TODO: Throw Exception
@@ -203,7 +203,7 @@ public class Checker extends natoBaseVisitor<Type>{
         MethodType methodType = new MethodType(payloadType, parameterTypes);
         Scope.getInstance().declareMethod(ctx.operationName.getText(), methodType);
         Scope.getInstance().openScope();
-        for (natoParser.StatementContext context : ctx.statement()){
+        for (natoParser.StatementContext context : ctx.statement()) {
             Type visitReturn = visit(context);
             if (visitReturn == null) {
                 //TODO: Throw Exception
@@ -263,7 +263,7 @@ public class Checker extends natoBaseVisitor<Type>{
     public Type visitIntExpression(natoParser.IntExpressionContext ctx) {
         try {
             int testy = Integer.parseInt(ctx.FALCON().getText());
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             //TODO: Throw exception
             return null;
         }
@@ -329,7 +329,7 @@ public class Checker extends natoBaseVisitor<Type>{
         try {
             x = (DataType) visit(ctx.leftExpr);
             y = (DataType) visit(ctx.rightExpr);
-        } catch (ClassCastException cce){
+        } catch (ClassCastException cce) {
             //TODO: Throw exception
             return null;
         }
@@ -343,17 +343,57 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitOrLogicalExpression(natoParser.OrLogicalExpressionContext ctx) {
-        return super.visitOrLogicalExpression(ctx);
+        DataType x;
+        DataType y;
+        try {
+            x = (DataType) visit(ctx.leftLogicalExpr);
+            y = (DataType) visit(ctx.rightLogicalExpr);
+        } catch (ClassCastException cce) {
+            throw new ClassCastException();
+        }
+
+        if ((x.getType() == 1) && (y.getType() == 1)) {
+            return new DataType(1);
+        } else {
+            throw new RuntimeException();
+        }
+
     }
 
     @Override
     public Type visitNotLogicalExpression(natoParser.NotLogicalExpressionContext ctx) {
-        return super.visitNotLogicalExpression(ctx);
+        DataType x;
+        DataType y;
+        try {
+            x = (DataType) visit(ctx.leftLogicalExpr);
+            y = (DataType) visit(ctx.rightLogicalExpr);
+        } catch (ClassCastException cce) {
+            throw new ClassCastException();
+        }
+
+        if ((x.getType() == 1) && (y.getType() == 1)) {
+            return new DataType(1);
+        } else {
+            throw new RuntimeException();
+        }
     }
 
     @Override
     public Type visitAndLogicalExpression(natoParser.AndLogicalExpressionContext ctx) {
-        return super.visitAndLogicalExpression(ctx);
+        DataType x;
+        DataType y;
+        try {
+            x = (DataType) visit(ctx.leftLogicalExpr);
+            y = (DataType) visit(ctx.rightLogicalExpr);
+        } catch (ClassCastException cce) {
+            throw new ClassCastException();
+        }
+
+        if ((x.getType() == 1) && (y.getType() == 1)) {
+            return new DataType(1);
+        } else {
+            throw new RuntimeException();
+        }
     }
 }
 
