@@ -14,10 +14,13 @@ public class Compiler {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             natoParser parser = new natoParser(tokens);
             natoParser.ProgramContext programTree = parser.program();
-
             Checker checker = new Checker();
-
             checker.visit(programTree);
+
+            Builder builder = new Builder();
+            builder.visit(programTree);
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
