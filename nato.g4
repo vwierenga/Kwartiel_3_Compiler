@@ -44,7 +44,7 @@ logicalExpression: leftExpr=expression (not='!'? op=('<' | '<=' | '=' | '>=' | '
 
 ENDL: 'over';
 FALCON: [0-9]+;
-MESSAGE: [A-Za-z]+;
+MESSAGE: [A-Za-z0-9]+;
 CONFIRM: 'AFFIRMATIVE' | 'NEGATIVE';
 WS: [ \t\r\n]+ -> skip;
 

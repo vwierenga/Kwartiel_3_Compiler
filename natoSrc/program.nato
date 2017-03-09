@@ -9,7 +9,9 @@ verify 2 > 3 over
     say not true over
 endVerify over
 
-execute all before 1 < 2 over
+falcon vier <- 4 over
+
+execute all before vier < 2 over
     falcon testy <- 1 - 2 over
     say testy over
 endExecute over

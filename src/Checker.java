@@ -273,6 +273,12 @@ public class Checker extends natoBaseVisitor<Type> {
     @Override
     public Type visitMessageExpression(natoParser.MessageExpressionContext ctx) {
         //return super.visitMessageExpression(ctx);
+
+        Symbol symbol = Scope.getInstance().lookupVariable(ctx.MESSAGE().getText());
+        if (symbol != null) {
+            return symbol.getType();
+        }
+
         return new DataType(0);
     }
 
@@ -285,7 +291,8 @@ public class Checker extends natoBaseVisitor<Type> {
         if (x.getClass().toString().equals("Falcon") && y.getClass().toString().equals("Falcon")) {
             return super.visitMultiExpression(ctx);
         } else {
-            throw new RuntimeException();
+            throw new CompileException("Line" + ctx.start.getLine() + " One of the expressions is not a falcon");
+            //return null;
         }
     }
 
@@ -297,7 +304,8 @@ public class Checker extends natoBaseVisitor<Type> {
         if (x.getClass().toString().equals("Falcon") && y.getClass().toString().equals("Falcon")) {
             return super.visitModExpression(ctx);
         } else {
-            throw new RuntimeException();
+            throw new CompileException("Line" + ctx.start.getLine() + " One of the expressions is not a falcon");
+            //return null;
         }
 
     }
@@ -336,7 +344,8 @@ public class Checker extends natoBaseVisitor<Type> {
         if ((x.getType() == 2) && (y.getType() == 2)) {
             return new DataType(1);
         } else {
-            throw new RuntimeException();
+            throw new CompileException("Line" + ctx.start.getLine() + " One of the expressions is not a falcon");
+            //return null;
         }
     }
 
