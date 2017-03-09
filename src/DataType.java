@@ -11,4 +11,8 @@ public class DataType extends Type {
     public DataType(int type) {
         this.type = type;
     }
+
+    public int getType() {
+        return type;
+    }
 }

@@ -3,8 +3,8 @@ grammar nato;
 program: 'this is ' MESSAGE ENDL (statement ENDL)+ 'over and out';
 
 statement: 'say ' MESSAGE+                      #printStatement
-           | type MESSAGE ('<-' expression+)?   #varDecAndInit
-           | MESSAGE '<-' expression+           #varAssignment
+           | type MESSAGE ('<-' expr=expression+)?   #varDecAndInit
+           | MESSAGE '<-' expr=expression+           #varAssignment
            | ifStmt                             #ifStatement
            | whileStmt                          #whileStatement
            | functionStmt                       #functionStatement
@@ -12,7 +12,7 @@ statement: 'say ' MESSAGE+                      #printStatement
            | operationStmt                      #operationStatement
            ;
 
-ifStmt: 'verify ' logicalExpression ENDL (statement ENDL)+ ('wrong ' statement+)? 'endVerify ';
+ifStmt: 'verify ' logicalExpression ENDL (ifCode=statement ENDL)+ ('wrong ' (elsecode=statement ENDL)+)? 'endVerify ';
 
 whileStmt: 'execute all before ' logicalExpression ENDL (statement ENDL)+ 'endExecute ';
 

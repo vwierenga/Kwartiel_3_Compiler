@@ -4,6 +4,12 @@ verify 1 < 2 OR 2 !< 3 over
     say true over
 endVerify over
 
+verify 2 > 3 over
+    say true over
+wrong over
+    say not true over
+endVerify over
+
 execute all before 1 < 2 over
     falcon testy <- 1 - 2 over
     say testy over

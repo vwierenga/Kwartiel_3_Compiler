@@ -12,7 +12,9 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitProgram(natoParser.ProgramContext ctx) {
+        Scope scope = Scope.getInstance();
         return super.visitProgram(ctx);
+        //return new MethodType(null, null);
     }
 
     @Override
@@ -22,16 +24,30 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitVarDecAndInit(natoParser.VarDecAndInitContext ctx) {
-        Scope.getInstance();
-        if(ctx.type().getText().equals("falcon")){
+        DataType dataType = null;
+        String variableName = ctx.MESSAGE().getText();
 
-        } else if (ctx.type().getText().equals("message")){
-
+        if (ctx.type().getText().equals("message")){
+            dataType = new DataType(0);
         } else if (ctx.type().getText().equals("confirm")){
-
+            dataType = new DataType(1);
+        } else if(ctx.type().getText().equals("falcon")) {
+            dataType = new DataType(2);
+        } else {
+            //TODO: Throw error
+            return null;
         }
 
-        return super.visitVarDecAndInit(ctx);
+        if(ctx.expr != null){
+            DataType expressionDataType = (DataType) visit(ctx.expr);
+            if (expressionDataType.getType() != dataType.getType()){
+                //TODO: Throw exception datatypes don't match
+            }
+        }
+
+        Scope.getInstance().declareVariable(variableName, dataType);
+
+        return dataType;
     }
 
     @Override
@@ -39,9 +55,25 @@ public class Checker extends natoBaseVisitor<Type>{
         return super.visitVarAssignment(ctx);
     }
 
+    //FIXME: Else code doesn't function yet. Grammar seems wrong?
     @Override
     public Type visitIfStatement(natoParser.IfStatementContext ctx) {
-        return super.visitIfStatement(ctx);
+        Scope.getInstance().openScope();
+        Type logicalExpression = visit(ctx.ifStmt().logicalExpression());
+        Type ifstmtCode = visit(ctx.ifStmt().ifCode);
+
+        if (logicalExpression == null || ifstmtCode == null){
+            return null;
+        }
+
+        if(ctx.ifStmt().elsecode != null){
+            System.out.println("else code exists");
+            Type elsestmtCode = visit(ctx.ifStmt().elsecode);
+        } else {
+            System.out.println("else code doesn't exist");
+        }
+        Scope.getInstance().closeScope();
+        return null;
     }
 
     @Override
