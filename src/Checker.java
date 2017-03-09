@@ -52,7 +52,28 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitVarAssignment(natoParser.VarAssignmentContext ctx) {
-        return super.visitVarAssignment(ctx);
+        Scope scope = Scope.getInstance();
+        Type msg = visit(ctx.MESSAGE());
+        Type expr = visit(ctx.expr);
+        Symbol var = scope.lookupVariable(msg.toString());
+
+        if (var.type.toString().equals("FALCON")) {
+
+            try {
+                int i = Integer.parseInt(expr.toString());
+            } catch (NumberFormatException nfe) {
+                throw new NumberFormatException();
+            }
+            return super.visitVarAssignment(ctx);
+
+        } else if (var.type.toString().equals("MESSAGE")) {
+            return super.visitVarAssignment(ctx);
+
+        } else if (var.type.toString().equals("CONFIRM") && expr.toString().equals("AFFIRMATIVE") || expr.toString().equals("NEGATIVE")) {
+            return super.visitVarAssignment(ctx);
+        }
+
+        throw new RuntimeException();
     }
 
     //FIXME: Else code doesn't function yet. Grammar seems wrong?
@@ -66,9 +87,9 @@ public class Checker extends natoBaseVisitor<Type>{
             return null;
         }
 
-        if(ctx.ifStmt().elsecode != null){
+        if(ctx.ifStmt().elseCode != null){
             System.out.println("else code exists");
-            Type elsestmtCode = visit(ctx.ifStmt().elsecode);
+            Type elsestmtCode = visit(ctx.ifStmt().elseCode);
         } else {
             System.out.println("else code doesn't exist");
         }
@@ -78,6 +99,17 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitWhileStatement(natoParser.WhileStatementContext ctx) {
+
+        Scope scope = Scope.getInstance().openScope();
+        Type logExpr = visit(ctx.whileStmt().logicalExpression());
+
+        if (logExpr != null) {
+
+        } else {
+            throw new RuntimeException();
+        }
+
+        scope.closeScope();
         return super.visitWhileStatement(ctx);
     }
 
@@ -162,8 +194,7 @@ public class Checker extends natoBaseVisitor<Type>{
         String mod = ctx.op.getText();
         if (x.getClass().toString().equals("Falcon") && y.getClass().toString().equals("Falcon")) {
             return super.visitMultiExpression(ctx);
-        }
-        else {
+        } else {
             throw new RuntimeException();
         }
     }
@@ -175,8 +206,7 @@ public class Checker extends natoBaseVisitor<Type>{
 
         if (x.getClass().toString().equals("Falcon") && y.getClass().toString().equals("Falcon")) {
             return super.visitModExpression(ctx);
-        }
-        else {
+        } else {
             throw new RuntimeException();
         }
 
@@ -188,7 +218,7 @@ public class Checker extends natoBaseVisitor<Type>{
         Type left = visit(ctx.leftExpr);
         Type right = visit(ctx.rightExpr);
 
-        if (!(ctx.op.getText().equals("-") || left == null || right == null)){
+        if (!(ctx.op.getText().equals("-") || left == null || right == null)) {
             //TODO: Throw Exception
             return null;
         }

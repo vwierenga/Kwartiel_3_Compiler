@@ -12,7 +12,7 @@ statement: 'say ' MESSAGE+                      #printStatement
            | operationStmt                      #operationStatement
            ;
 
-ifStmt: 'verify ' logicalExpression ENDL (ifCode=statement ENDL)+ ('wrong ' (elsecode=statement ENDL)+)? 'endVerify ';
+ifStmt: 'verify ' logicalExpression ENDL (ifCode = statement ENDL)+ ('wrong ' elseCode = statement+)? 'endVerify ';
 
 whileStmt: 'execute all before ' logicalExpression ENDL (statement ENDL)+ 'endExecute ';
 
