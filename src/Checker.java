@@ -1,6 +1,5 @@
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 /**
@@ -29,8 +28,8 @@ public class Checker extends natoBaseVisitor<Type> {
 
             }
         } else {
-            //TODO: Throw Exception
-            return null;
+            throw new CompileException("Line" + ctx.start.getLine() + " Incorrect message after say");
+            //return null;
         }
         return new DataType(0);
         //return super.visitPrintStatement(ctx);
@@ -48,14 +47,15 @@ public class Checker extends natoBaseVisitor<Type> {
         } else if (ctx.type().getText().equals("falcon")) {
             dataType = new DataType(2);
         } else {
-            //TODO: Throw error
-            return null;
+            throw new CompileException("Line" + ctx.start.getLine() + " expecting a message, confirm or falcon after " + variableName);
+            //return null;
         }
 
         if (ctx.expr != null) {
             DataType expressionDataType = (DataType) visit(ctx.expr);
             if (expressionDataType.getType() != dataType.getType()) {
-                //TODO: Throw exception datatypes don't match
+                throw new CompileException("Line" + ctx.start.getLine() + " datatypes don't match. Expecting a " + ctx.type().getText());
+                //return null;
             }
         }
 
@@ -72,8 +72,8 @@ public class Checker extends natoBaseVisitor<Type> {
         Symbol var = scope.lookupVariable(msg);
 
         if (var == null) {
-            //TODO: Throw exception
-            return null;
+            throw new CompileException("Line" + ctx.start.getLine() + " " + msg + " is not declared");
+            //return null;
         }
 
         if (var.type.toString().equals("FALCON")) {
