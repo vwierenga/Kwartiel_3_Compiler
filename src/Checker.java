@@ -1,5 +1,6 @@
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 /**
@@ -224,6 +225,7 @@ public class Checker extends natoBaseVisitor<Type>{
         return super.visitCopyStmt(ctx);
     }
 
+    //Not needed
     @Override
     public Type visitType(natoParser.TypeContext ctx) {
         return super.visitType(ctx);
@@ -312,10 +314,17 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitParentLogicalExpresssion(natoParser.ParentLogicalExpresssionContext ctx) {
-        Type x = visit(ctx.leftExpr);
-        Type y = visit(ctx.rightExpr);
+        DataType x;
+        DataType y;
+        try {
+            x = (DataType) visit(ctx.leftExpr);
+            y = (DataType) visit(ctx.rightExpr);
+        } catch (ClassCastException cce){
+            //TODO: Throw exception
+            return null;
+        }
 
-        if (x.getClass().toString().equals("FALCON") && y.getClass().toString().equals("FALCON")) {
+        if ((x.getType() == 2) && (y.getType() == 2)) {
             return new DataType(1);
         } else {
             throw new RuntimeException();
