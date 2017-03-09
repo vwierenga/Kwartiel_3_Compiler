@@ -92,10 +92,9 @@ public class Checker extends natoBaseVisitor<Type> {
             return super.visitVarAssignment(ctx);
         }
 
-        throw new RuntimeException();
+        throw new CompileException("Line" + ctx.start.getLine() + " Type should be a falcon, message or confirm");
     }
 
-    //FIXME: Else code doesn't function yet. Grammar seems wrong?
     @Override
     public Type visitIfStatement(natoParser.IfStatementContext ctx) {
         return visit(ctx.ifStmt());
