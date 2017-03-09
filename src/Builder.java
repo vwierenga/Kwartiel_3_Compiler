@@ -4,11 +4,31 @@
 public class Builder extends natoBaseVisitor<Type>{
     @Override
     public Type visitProgram(natoParser.ProgramContext ctx) {
-        return super.visitProgram(ctx);
+        System.out.println(".class public " + ctx.MESSAGE());
+        System.out.println(".super java/lang/Object");
+        System.out.println(".method public <init>()V");
+        System.out.println("aload_0 ");
+        System.out.println("invokenonvirtual java/lang/Object/<init>()V");
+        System.out.println("return");
+        System.out.println(".end method");
+        System.out.println(".method public static main([Ljava/lang/String;)V");
+        System.out.println(".limit stack 60     ; Setup the stack size for this method");
+        System.out.println(".limit locals 40    ; Setup the number of locals for this method (number of parameters + local variables)");
+
+        super.visitProgram(ctx);
+        //Code Here
+
+        System.out.println("return                              ; End the method (important!!!)");
+        System.out.println(".end method");
+
+        return null;
     }
 
     @Override
     public Type visitPrintStatement(natoParser.PrintStatementContext ctx) {
+        System.out.println("getstatic java/lang/System/out Ljava/io/PrintStream; ");
+        System.out.println("ldc " + ctx.MESSAGE(0));
+        System.out.println("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
         return super.visitPrintStatement(ctx);
     }
 
