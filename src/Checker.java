@@ -69,27 +69,32 @@ public class Checker extends natoBaseVisitor<Type> {
         Scope scope = Scope.getInstance();
         String msg = ctx.MESSAGE().getText();
         Type expr = visit(ctx.expr);
-        Symbol var = scope.lookupVariable(msg);
+        //Symbol var = scope.lookupVariable(msg);
+        Symbol var = Scope.getInstance().lookupVariable(msg);
+
+
 
         if (var == null) {
             throw new CompileException("Line" + ctx.start.getLine() + " " + msg + " is not declared");
             //return null;
         }
 
-        if (var.type.toString().equals("FALCON")) {
+        DataType dataType;
+        try {
+            dataType = (DataType) var.getType();
+        } catch (ClassCastException cce) {
+            //TODO: Throw exception
+            return null;
+        }
 
-            try {
-                int i = Integer.parseInt(expr.toString());
-            } catch (NumberFormatException nfe) {
-                throw new NumberFormatException();
-            }
-            return super.visitVarAssignment(ctx);
+        if (dataType.getType() == 2) {
+            return new DataType(2);
 
-        } else if (var.type.toString().equals("MESSAGE")) {
-            return super.visitVarAssignment(ctx);
+        } else if (dataType.getType() == 0) {
+            return new DataType(0);
 
-        } else if (var.type.toString().equals("CONFIRM") && expr.toString().equals("AFFIRMATIVE") || expr.toString().equals("NEGATIVE")) {
-            return super.visitVarAssignment(ctx);
+        } else if (dataType.getType() == 1 && expr.toString().equals("AFFIRMATIVE") || expr.toString().equals("NEGATIVE")) {
+            new DataType(1);
         }
 
         throw new CompileException("Line" + ctx.start.getLine() + " Type should be a falcon, message or confirm");

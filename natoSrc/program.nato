@@ -10,6 +10,7 @@ verify 2 > 3 over
 endVerify over
 
 falcon vier <- 4 over
+vier <- vier - 2 over
 
 execute all before vier < 2 over
     falcon testy <- 1 - 2 over
