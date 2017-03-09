@@ -217,7 +217,17 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitOperationStmt(natoParser.OperationStmtContext ctx) {
-        return super.visitOperationStmt(ctx);
+        if(ctx.operationName == null) {
+            return null;
+            //TODO: Throw Exception
+        }
+        Symbol symbol = Scope.getInstance().lookupMethod(ctx.operationName.getText());
+        if (symbol == null){
+            return null;
+            //TODO: Throw Exception
+        }
+
+        return symbol.type;
     }
 
     @Override

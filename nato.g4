@@ -18,11 +18,9 @@ whileStmt: 'execute all before ' logicalExpression ENDL (statement ENDL)+ 'endEx
 
 functionStmt: 'operation ' operationName=MESSAGE (operationParameters)? ENDL (statement ENDL)+ ('payload is ' payloadType=type MESSAGE ENDL)?  'endOperation ';
 
-operationStmt: (type MESSAGE)? 'start operation ' MESSAGE;
+operationStmt: 'start operation ' operationName=MESSAGE;
 
-copyStmt: (type) MESSAGE 'copy'
-        | 'copy'
-        ;
+copyStmt: ((type) MESSAGE)? 'copy';
 
 operationParameters: (type MESSAGE)+;
 
