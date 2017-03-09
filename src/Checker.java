@@ -94,6 +94,7 @@ public class Checker extends natoBaseVisitor<Type>{
         throw new RuntimeException();
     }
 
+    //FIXME: Else code doesn't function yet. Grammar seems wrong?
     @Override
     public Type visitIfStatement(natoParser.IfStatementContext ctx) {
         return visit(ctx.ifStmt());
@@ -230,6 +231,14 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitMinusExpression(natoParser.MinusExpressionContext ctx) {
+        Type exp = visit(ctx.expression());
+
+        try {
+            int i = Integer.parseInt(exp.toString());
+        } catch (NumberFormatException nfe) {
+            throw new NumberFormatException();
+        }
+
         return super.visitMinusExpression(ctx);
     }
 
@@ -303,7 +312,14 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitParentLogicalExpresssion(natoParser.ParentLogicalExpresssionContext ctx) {
-        return super.visitParentLogicalExpresssion(ctx);
+        Type x = visit(ctx.leftExpr);
+        Type y = visit(ctx.rightExpr);
+
+        if (x.getClass().toString().equals("FALCON") && y.getClass().toString().equals("FALCON")) {
+            return new DataType(1);
+        } else {
+            throw new RuntimeException();
+        }
     }
 
     @Override

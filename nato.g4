@@ -38,7 +38,7 @@ expression:	'('	expression	')'                                                 #
 		    ;
 
 logicalExpression: leftExpr=expression (not='!'? op=('<' | '<=' | '=' | '>=' | '>')) rightExpr=expression   #parentLogicalExpresssion
-                   | leftLogicExpr=logicalExpression op='OR' rightLogicalExpr=logicalExpression             #orLogicalExpression
+                   | leftLogicalExpr=logicalExpression op='OR' rightLogicalExpr=logicalExpression             #orLogicalExpression
                    | leftLogicalExpr=logicalExpression op='AND' rightLogicalExpr=logicalExpression          #andLogicalExpression
                    | leftLogicalExpr=logicalExpression op='NOT' rightLogicalExpr=logicalExpression          #notLogicalExpression
                    ;

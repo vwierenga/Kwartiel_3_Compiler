@@ -6,7 +6,6 @@ endVerify over
 
 verify 2 > 3 over
     say true over
-wrong over
     say not true over
 endVerify over
 
