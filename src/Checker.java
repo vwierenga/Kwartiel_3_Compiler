@@ -1,3 +1,7 @@
+import org.antlr.v4.runtime.tree.TerminalNode;
+
+import java.util.ArrayList;
+
 /**
  * Created by Laptop-oud on 16-2-2017.
  */
@@ -19,7 +23,16 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitPrintStatement(natoParser.PrintStatementContext ctx) {
-        return super.visitPrintStatement(ctx);
+        if (ctx.MESSAGE() != null){
+            for (TerminalNode node : ctx.MESSAGE()){
+
+            }
+        } else {
+            //TODO: Throw Exception
+            return null;
+        }
+        return new DataType(0);
+        //return super.visitPrintStatement(ctx);
     }
 
     @Override
@@ -53,9 +66,14 @@ public class Checker extends natoBaseVisitor<Type>{
     @Override
     public Type visitVarAssignment(natoParser.VarAssignmentContext ctx) {
         Scope scope = Scope.getInstance();
-        Type msg = visit(ctx.MESSAGE());
+        String msg = ctx.MESSAGE().getText();
         Type expr = visit(ctx.expr);
-        Symbol var = scope.lookupVariable(msg.toString());
+        Symbol var = scope.lookupVariable(msg);
+
+        if (var == null){
+            //TODO: Throw exception
+            return null;
+        }
 
         if (var.type.toString().equals("FALCON")) {
 
@@ -76,20 +94,45 @@ public class Checker extends natoBaseVisitor<Type>{
         throw new RuntimeException();
     }
 
-    //FIXME: Else code doesn't function yet. Grammar seems wrong?
     @Override
     public Type visitIfStatement(natoParser.IfStatementContext ctx) {
+        return visit(ctx.ifStmt());
+    }
+
+    @Override
+    public Type visitWhileStatement(natoParser.WhileStatementContext ctx) {
+        return visit(ctx.whileStmt());
+    }
+
+    @Override
+    public Type visitFunctionStatement(natoParser.FunctionStatementContext ctx) {
+        return visit(ctx.functionStmt());
+    }
+
+    @Override
+    public Type visitCopyStatement(natoParser.CopyStatementContext ctx) {
+        return visit(ctx.copyStmt());
+    }
+
+    @Override
+    public Type visitOperationStatement(natoParser.OperationStatementContext ctx) {
+        return visit(ctx.operationStmt());
+    }
+
+    //FIXME: Else code doesn't function yet. Grammar seems wrong?
+    @Override
+    public Type visitIfStmt(natoParser.IfStmtContext ctx) {
         Scope.getInstance().openScope();
-        Type logicalExpression = visit(ctx.ifStmt().logicalExpression());
-        Type ifstmtCode = visit(ctx.ifStmt().ifCode);
+        Type logicalExpression = visit(ctx.logicalExpression());
+        Type ifstmtCode = visit(ctx.ifCode);
 
         if (logicalExpression == null || ifstmtCode == null){
             return null;
         }
 
-        if(ctx.ifStmt().elseCode != null){
+        if(ctx.elseCode != null){
             System.out.println("else code exists");
-            Type elsestmtCode = visit(ctx.ifStmt().elseCode);
+            Type elsestmtCode = visit(ctx.elseCode);
         } else {
             System.out.println("else code doesn't exist");
         }
@@ -98,10 +141,9 @@ public class Checker extends natoBaseVisitor<Type>{
     }
 
     @Override
-    public Type visitWhileStatement(natoParser.WhileStatementContext ctx) {
-
+    public Type visitWhileStmt(natoParser.WhileStmtContext ctx) {
         Scope scope = Scope.getInstance().openScope();
-        Type logExpr = visit(ctx.whileStmt().logicalExpression());
+        Type logExpr = visit(ctx.logicalExpression());
 
         if (logExpr != null) {
 
@@ -110,37 +152,65 @@ public class Checker extends natoBaseVisitor<Type>{
         }
 
         scope.closeScope();
-        return super.visitWhileStatement(ctx);
-    }
-
-    @Override
-    public Type visitFunctionStatement(natoParser.FunctionStatementContext ctx) {
-        return super.visitFunctionStatement(ctx);
-    }
-
-    @Override
-    public Type visitCopyStatement(natoParser.CopyStatementContext ctx) {
-        return super.visitCopyStatement(ctx);
-    }
-
-    @Override
-    public Type visitOperationStatement(natoParser.OperationStatementContext ctx) {
-        return super.visitOperationStatement(ctx);
-    }
-
-    @Override
-    public Type visitIfStmt(natoParser.IfStmtContext ctx) {
-        return super.visitIfStmt(ctx);
-    }
-
-    @Override
-    public Type visitWhileStmt(natoParser.WhileStmtContext ctx) {
-        return super.visitWhileStmt(ctx);
+        return null;
     }
 
     @Override
     public Type visitFunctionStmt(natoParser.FunctionStmtContext ctx) {
-        return super.visitFunctionStmt(ctx);
+
+        if(ctx.operationName == null){
+            return null;
+            //TODO: Throw Exception
+        }
+
+        DataType payloadType = null;
+        if (ctx.payloadType != null) {
+            if (ctx.payloadType.getText().equals("message")){
+                payloadType = new DataType(0);
+            } else if(ctx.payloadType.getText().equals("confirm")){
+                payloadType = new DataType(1);
+            } else if(ctx.payloadType.getText().equals("falcon")){
+                payloadType = new DataType(2);
+            } else {
+                //TODO: Throw Exception
+                return null;
+            }
+        } else {
+            //TODO: Throw Exception
+            return null;
+        }
+
+        ArrayList<DataType> parameterTypes = new ArrayList<>();
+
+        for (natoParser.TypeContext typeContext : ctx.operationParameters().type()){
+            DataType parameterType = null;
+            if (typeContext.getText().equals("message")){
+                parameterType = new DataType(0);
+            } else if(typeContext.getText().equals("confirm")){
+                parameterType = new DataType(1);
+            } else if(typeContext.getText().equals("falcon")){
+                parameterType = new DataType(2);
+            } else {
+                //TODO: Throw Exception
+                return null;
+            }
+
+            parameterTypes.add(parameterType);
+        }
+
+        MethodType methodType = new MethodType(payloadType, parameterTypes);
+        Scope.getInstance().declareMethod(ctx.operationName.getText(), methodType);
+        Scope.getInstance().openScope();
+        for (natoParser.StatementContext context : ctx.statement()){
+            Type visitReturn = visit(context);
+            if (visitReturn == null) {
+                //TODO: Throw Exception
+                return null;
+            }
+        }
+        Scope.getInstance().closeScope();
+
+        return methodType;
     }
 
     @Override
@@ -165,14 +235,13 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitConfirmExpression(natoParser.ConfirmExpressionContext ctx) {
-        return super.visitConfirmExpression(ctx);
+        return new DataType(1);
     }
 
     @Override
     public Type visitIntExpression(natoParser.IntExpressionContext ctx) {
         try {
             int testy = Integer.parseInt(ctx.FALCON().getText());
-            System.out.println("Falcon: " + testy);
         } catch (NumberFormatException e){
             //TODO: Throw exception
             return null;
@@ -183,7 +252,8 @@ public class Checker extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitMessageExpression(natoParser.MessageExpressionContext ctx) {
-        return super.visitMessageExpression(ctx);
+        //return super.visitMessageExpression(ctx);
+        return new DataType(0);
     }
 
     @Override

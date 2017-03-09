@@ -16,8 +16,8 @@ execute all before 1 < 2 over
 endExecute over
 
 operation mango falcon variablenameone message twelve over
-    say nothing over
-    payload <- TRUE over
+    say nothing and more over
+    payload is message TRUE over
 endOperation over
 
 start operation mango over

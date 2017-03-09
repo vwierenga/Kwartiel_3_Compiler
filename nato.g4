@@ -16,13 +16,15 @@ ifStmt: 'verify ' logicalExpression ENDL (ifCode = statement ENDL)+ ('wrong ' el
 
 whileStmt: 'execute all before ' logicalExpression ENDL (statement ENDL)+ 'endExecute ';
 
-functionStmt: 'operation ' MESSAGE ((type MESSAGE)+)? ENDL (statement ENDL)+ ('payload = ' (type) ENDL)?  'endOperation ';
+functionStmt: 'operation ' operationName=MESSAGE (operationParameters)? ENDL (statement ENDL)+ ('payload is ' payloadType=type MESSAGE ENDL)?  'endOperation ';
 
 operationStmt: (type MESSAGE)? 'start operation ' MESSAGE;
 
 copyStmt: (type) MESSAGE 'copy'
         | 'copy'
         ;
+
+operationParameters: (type MESSAGE)+;
 
 type : ('falcon' | 'message' | 'confirm');
 expression:	'('	expression	')'                                                 #parentExpression

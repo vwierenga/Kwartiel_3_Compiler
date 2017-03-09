@@ -66,8 +66,8 @@ public class Scope {
         return symbol;
     }
 
-    public Symbol declareMethod(String name, DataType returnType, ArrayList<DataType> parameters){
-        Symbol symbol = new Symbol(name, new MethodType(returnType, parameters));
+    public Symbol declareMethod(String name, MethodType type){
+        Symbol symbol = new Symbol(name, type);
         if (this.lookupMethod(name) == null) {
             symbolTable.put(name, symbol);
         }
