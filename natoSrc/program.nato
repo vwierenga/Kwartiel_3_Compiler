@@ -1,5 +1,7 @@
 this is program over
 
+confirm testirone <- AFFIRMATIVE over
+
 verify 1 < 2 OR 2 !< 3 over
     say true over
 endVerify over
@@ -19,9 +21,15 @@ endExecute over
 
 operation mango falcon variablenameone message twelve over
     say nothing and more over
+    say testirone over
     payload is message TRUE over
 endOperation over
 
 start operation mango over
+
+falcon test <- 5 over
+verify test > 1 over
+    say test over
+endVerify over
 
 over and out
