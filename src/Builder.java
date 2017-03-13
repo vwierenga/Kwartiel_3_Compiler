@@ -26,8 +26,14 @@ public class Builder extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitPrintStatement(natoParser.PrintStatementContext ctx) {
+        /*
+        getstatic java/lang/System/out Ljava/io/PrintStream;
+	    ldc "testy"
+	    invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+         */
+
         System.out.println("getstatic java/lang/System/out Ljava/io/PrintStream; ");
-        System.out.println("ldc " + ctx.MESSAGE(0));
+        System.out.println("ldc \"" + ctx.MESSAGE(0) + "\"");
         System.out.println("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
         return super.visitPrintStatement(ctx);
     }
@@ -104,6 +110,9 @@ public class Builder extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitMinusExpression(natoParser.MinusExpressionContext ctx) {
+        visit(ctx.expression());
+        System.out.println("ineg");
+
         return super.visitMinusExpression(ctx);
     }
 
@@ -114,6 +123,8 @@ public class Builder extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitIntExpression(natoParser.IntExpressionContext ctx) {
+        System.out.println("ldc " + ctx.getText());
+
         return super.visitIntExpression(ctx);
     }
 
@@ -124,16 +135,39 @@ public class Builder extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitMultiExpression(natoParser.MultiExpressionContext ctx) {
+        visit(ctx.leftExpr);
+        visit(ctx.rightExpr);
+
+        if (ctx.op.getText().equals("*")){
+            System.out.println("imul");
+        } else if (ctx.op.getText().equals("/")){
+            System.out.println("idiv");
+        }
+
         return super.visitMultiExpression(ctx);
     }
 
     @Override
     public Type visitModExpression(natoParser.ModExpressionContext ctx) {
+        visit(ctx.leftExpr);
+        visit(ctx.rightExpr);
+
+        System.out.println("irem");
+
         return super.visitModExpression(ctx);
     }
 
     @Override
     public Type visitSubExpression(natoParser.SubExpressionContext ctx) {
+        visit(ctx.leftExpr);
+        visit(ctx.rightExpr);
+
+        if (ctx.op.getText().equals("+")){
+            System.out.println("iadd");
+        } else if (ctx.op.getText().equals("-")){
+            System.out.println("isub");
+        }
+
         return super.visitSubExpression(ctx);
     }
 
