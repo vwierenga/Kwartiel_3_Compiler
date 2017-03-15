@@ -50,27 +50,27 @@ public class Builder extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitIfStatement(natoParser.IfStatementContext ctx) {
-        return super.visitIfStatement(ctx);
+        return visit(ctx.ifStmt());
     }
 
     @Override
     public Type visitWhileStatement(natoParser.WhileStatementContext ctx) {
-        return super.visitWhileStatement(ctx);
+        return visit(ctx.whileStmt());
     }
 
     @Override
     public Type visitFunctionStatement(natoParser.FunctionStatementContext ctx) {
-        return super.visitFunctionStatement(ctx);
+        return visit(ctx.functionStmt());
     }
 
     @Override
     public Type visitCopyStatement(natoParser.CopyStatementContext ctx) {
-        return super.visitCopyStatement(ctx);
+        return visit(ctx.copyStmt());
     }
 
     @Override
     public Type visitOperationStatement(natoParser.OperationStatementContext ctx) {
-        return super.visitOperationStatement(ctx);
+        return visit(ctx.operationStmt());
     }
 
     @Override
