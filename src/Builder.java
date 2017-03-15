@@ -173,11 +173,18 @@ public class Builder extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitParentExpression(natoParser.ParentExpressionContext ctx) {
+        visit(ctx.expression());
+
         return super.visitParentExpression(ctx);
     }
 
     @Override
     public Type visitParentLogicalExpresssion(natoParser.ParentLogicalExpresssionContext ctx) {
+        visit(ctx.leftExpr);
+        visit(ctx.rightExpr);
+
+
+
         return super.visitParentLogicalExpresssion(ctx);
     }
 

@@ -188,6 +188,8 @@ public class Checker extends natoBaseVisitor<Type> {
 
         ArrayList<DataType> parameterTypes = new ArrayList<>();
 
+        //FIXME: Add parameter name check
+
         for (natoParser.TypeContext typeContext : ctx.operationParameters().type()) {
             DataType parameterType = null;
             if (typeContext.getText().equals("message")) {
