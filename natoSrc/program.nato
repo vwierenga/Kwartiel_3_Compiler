@@ -1,6 +1,8 @@
 this is program over
 
 confirm testirone <- AFFIRMATIVE over
+confirm testo over
+testo <- AFFIRMATIVE over
 
 verify 2 < 3 over
     say twosmallerthree over

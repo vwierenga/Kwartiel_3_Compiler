@@ -51,7 +51,9 @@ public class Builder extends natoBaseVisitor<Type>{
         DataType value = (DataType) visit(ctx.expr);
         DataType name = (DataType) visit(ctx.MESSAGE());
 
-        System.out.println("ldc " + value);
+        if (value != null) {
+            System.out.println("ldc " + value);
+        }
         System.out.println("astore " + frameStorage.size());
         frameStorage.put(frameStorage.size(), name);
 
