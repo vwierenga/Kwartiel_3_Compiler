@@ -2,6 +2,9 @@
  * Created by Wilco on 09-Mar-17.
  */
 public class Builder extends natoBaseVisitor<Type>{
+
+    private int labelCounter = 0;
+
     @Override
     public Type visitProgram(natoParser.ProgramContext ctx) {
         System.out.println(".class public " + ctx.MESSAGE());
@@ -35,7 +38,7 @@ public class Builder extends natoBaseVisitor<Type>{
         System.out.println("getstatic java/lang/System/out Ljava/io/PrintStream; ");
         System.out.println("ldc \"" + ctx.MESSAGE(0) + "\"");
         System.out.println("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
-        return super.visitPrintStatement(ctx);
+        return null;
     }
 
     @Override
@@ -75,37 +78,69 @@ public class Builder extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitIfStmt(natoParser.IfStmtContext ctx) {
-        return super.visitIfStmt(ctx);
+        //false == 0
+        //true != 0
+        visit(ctx.logicalExpression());
+
+        System.out.println("tableswitch 0");
+        System.out.println("false" + labelCounter);
+        System.out.println("true" + labelCounter);
+        System.out.println("default : true" + labelCounter);
+        System.out.println("false" + labelCounter + ":");
+        if(ctx.elseCode != null){
+            visit(ctx.elseCode);
+        }
+        System.out.println("goto endif" + labelCounter);
+        System.out.println("true" + labelCounter + ":");
+        visit(ctx.ifCode);
+        System.out.println("endif" + labelCounter + ":");
+        labelCounter++;
+
+        //tableswitch 0
+        //Label1
+        //Label2
+        //default : DefaultLabel
+
+        //Label1:
+        //... got 0
+
+        //Label2:
+        //... got 1
+
+        //DefaultLabel:
+        //... got something else
+
+        return null;
     }
 
     @Override
     public Type visitWhileStmt(natoParser.WhileStmtContext ctx) {
-        return super.visitWhileStmt(ctx);
+        return null;
     }
 
     @Override
     public Type visitFunctionStmt(natoParser.FunctionStmtContext ctx) {
-        return super.visitFunctionStmt(ctx);
+        return null;
     }
 
     @Override
     public Type visitOperationStmt(natoParser.OperationStmtContext ctx) {
-        return super.visitOperationStmt(ctx);
+        return null;
     }
 
     @Override
     public Type visitCopyStmt(natoParser.CopyStmtContext ctx) {
-        return super.visitCopyStmt(ctx);
+        return null;
     }
 
     @Override
     public Type visitOperationParameters(natoParser.OperationParametersContext ctx) {
-        return super.visitOperationParameters(ctx);
+        return null;
     }
 
     @Override
     public Type visitType(natoParser.TypeContext ctx) {
-        return super.visitType(ctx);
+        return null;
     }
 
     @Override
@@ -113,19 +148,19 @@ public class Builder extends natoBaseVisitor<Type>{
         visit(ctx.expression());
         System.out.println("ineg");
 
-        return super.visitMinusExpression(ctx);
+        return null;
     }
 
     @Override
     public Type visitConfirmExpression(natoParser.ConfirmExpressionContext ctx) {
-        return super.visitConfirmExpression(ctx);
+        return null;
     }
 
     @Override
     public Type visitIntExpression(natoParser.IntExpressionContext ctx) {
         System.out.println("ldc " + ctx.getText());
 
-        return super.visitIntExpression(ctx);
+        return null;
     }
 
     @Override
@@ -144,7 +179,7 @@ public class Builder extends natoBaseVisitor<Type>{
             System.out.println("idiv");
         }
 
-        return super.visitMultiExpression(ctx);
+        return null;
     }
 
     @Override
@@ -154,7 +189,7 @@ public class Builder extends natoBaseVisitor<Type>{
 
         System.out.println("irem");
 
-        return super.visitModExpression(ctx);
+        return null;
     }
 
     @Override
@@ -168,14 +203,14 @@ public class Builder extends natoBaseVisitor<Type>{
             System.out.println("isub");
         }
 
-        return super.visitSubExpression(ctx);
+        return null;
     }
 
     @Override
     public Type visitParentExpression(natoParser.ParentExpressionContext ctx) {
         visit(ctx.expression());
 
-        return super.visitParentExpression(ctx);
+        return null;
     }
 
     @Override
@@ -183,24 +218,98 @@ public class Builder extends natoBaseVisitor<Type>{
         visit(ctx.leftExpr);
         visit(ctx.rightExpr);
 
+        //false == 0
+        //true != 0
+
+        //System.out.println("icmpg"); //Compare the two ints on the stack
+
+        // The integer result on the stack is:
+        //     0 if local left equals right
+        //     -1 if local left is less than right
+        //     1 if local left is greater than right
+
+        //If the int on the stack is 0, jump to Label1.
+        //If it is 1, jump to Label2.
+        //Otherwise jump to DefaultLabel.
+
+        //'<' | '<=' | '=' | '>=' | '>'
+        //if_icmpTYPE
+        //TYPE EQ = == NE = != GT = > GE = >= LT = < LE <=
+
+        if(ctx.op.getText().equals("<")){
+            System.out.println("if_icmplt then" + labelCounter);
+        } else if(ctx.op.getText().equals("<=")) {
+            System.out.println("if_icmple then" + labelCounter);
+        } else if(ctx.op.getText().equals("=")) {
+            System.out.println("if_icmpeq then" + labelCounter);
+        } else if(ctx.op.getText().equals(">=")) {
+            System.out.println("if_icmpge then" + labelCounter);
+        } else if(ctx.op.getText().equals(">")){
+            System.out.println("if_icmpgt then" + labelCounter);
+        }
+
+
+        System.out.println("else" + labelCounter + ":");
+        if(ctx.not != null){
+            System.out.println("ldc 1");
+        } else {
+            System.out.println("ldc 0");
+        }
+        System.out.println("goto endif" + labelCounter);
+        System.out.println("then" + labelCounter + ":");
+        if(ctx.not != null){
+            System.out.println("ldc 0");
+        } else {
+            System.out.println("ldc 1");
+        }
+        System.out.println("endif" + labelCounter + ":");
+
+        labelCounter++;
+
+
+        //tableswitch 0
+        //Label1
+        //Label2
+        //default : DefaultLabel
+
+        //Label1:
+        //... got 0
+
+        //Label2:
+        //... got 1
+
+        //DefaultLabel:
+        //... got something else
 
 
 
-        return super.visitParentLogicalExpresssion(ctx);
+
+        return null;
     }
 
     @Override
     public Type visitOrLogicalExpression(natoParser.OrLogicalExpressionContext ctx) {
-        return super.visitOrLogicalExpression(ctx);
+        visit(ctx.leftLogicalExpr);
+        visit(ctx.rightLogicalExpr);
+
+
+
+        return null;
     }
 
     @Override
     public Type visitNotLogicalExpression(natoParser.NotLogicalExpressionContext ctx) {
-        return super.visitNotLogicalExpression(ctx);
+        visit(ctx.leftLogicalExpr);
+        visit(ctx.rightLogicalExpr);
+
+        return null;
     }
 
     @Override
     public Type visitAndLogicalExpression(natoParser.AndLogicalExpressionContext ctx) {
-        return super.visitAndLogicalExpression(ctx);
+        visit(ctx.leftLogicalExpr);
+        visit(ctx.rightLogicalExpr);
+
+        return null;
     }
 }

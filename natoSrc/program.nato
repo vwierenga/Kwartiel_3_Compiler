@@ -2,13 +2,16 @@ this is program over
 
 confirm testirone <- AFFIRMATIVE over
 
+verify 2 < 3 over
+    say twosmallerthree over
+endVerify over
+
 verify 1 < 2 OR 2 !< 3 over
-    say true over
+    say orthingy over
 endVerify over
 
 verify 2 > 3 over
-    say true over
-    say not true over
+    say twobiggerthree over
 endVerify over
 
 falcon vier <- 4 over
@@ -16,7 +19,7 @@ vier <- vier - 2 over
 
 execute all before vier < 2 over
     falcon testy <- 1 - 2 over
-    say testy over
+    say vierbeforetwo over
 endExecute over
 
 operation mango falcon variablenameone message twelve over
