@@ -1,9 +1,14 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Created by Wilco on 09-Mar-17.
  */
 public class Builder extends natoBaseVisitor<Type>{
 
     private int labelCounter = 0;
+    private HashMap<Integer, DataType> frameStorage = new HashMap<>();
 
     @Override
     public Type visitProgram(natoParser.ProgramContext ctx) {
@@ -43,11 +48,30 @@ public class Builder extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitVarDecAndInit(natoParser.VarDecAndInitContext ctx) {
+        DataType value = (DataType) visit(ctx.expr);
+        DataType name = (DataType) visit(ctx.MESSAGE());
+
+        System.out.println("ldc " + value);
+        System.out.println("astore " + frameStorage.size());
+        frameStorage.put(frameStorage.size(), name);
+
         return super.visitVarDecAndInit(ctx);
     }
 
     @Override
     public Type visitVarAssignment(natoParser.VarAssignmentContext ctx) {
+        DataType value = (DataType) visit(ctx.expr);
+        DataType name = (DataType) visit(ctx.MESSAGE());
+        int valueIndex;
+
+        for (Map.Entry<Integer, DataType> map : frameStorage.entrySet()) {
+            if (Objects.equals(map, name)) {
+                System.out.println("aload " + map.getKey());
+                System.out.println("ldc " + value);
+                System.out.println("astore " + map.getKey());
+            }
+        }
+
         return super.visitVarAssignment(ctx);
     }
 
