@@ -5,13 +5,12 @@ import java.util.Objects;
 /**
  * Created by Wilco on 09-Mar-17.
  */
-public class Builder extends natoBaseVisitor<Type>{
+public class Builder extends natoBaseVisitor<Type> {
 
     private int whilelabelCounter = 0;
     private int iflabelCounter = 0;
     private int logicalexpressionlabelCounter = 0;
     private HashMap<Integer, DataType> frameStorage = new HashMap<>();
-
 
     @Override
     public Type visitProgram(natoParser.ProgramContext ctx) {
@@ -55,8 +54,13 @@ public class Builder extends natoBaseVisitor<Type>{
         DataType name = (DataType) visit(ctx.MESSAGE());
 
         if (value != null) {
-            System.out.println("ldc " + value);
-            System.out.println("istore " + (frameStorage.size() + 1));
+            if (value.getType() == 0) {
+                System.out.println("ldc " + value);
+                System.out.println("astore " + (frameStorage.size() + 1));
+            } else if (value.getType() == 2) {
+                System.out.println("ldc " + value);
+                System.out.println("istore " + (frameStorage.size() + 1));
+            }
         } else {
             System.out.println("ldc 0");
             System.out.println("istore " + (frameStorage.size() + 1));
@@ -70,13 +74,18 @@ public class Builder extends natoBaseVisitor<Type>{
     public Type visitVarAssignment(natoParser.VarAssignmentContext ctx) {
         DataType value = (DataType) visit(ctx.expr);
         DataType name = (DataType) visit(ctx.MESSAGE());
-        int valueIndex;
 
         for (Map.Entry<Integer, DataType> map : frameStorage.entrySet()) {
             if (Objects.equals(map, name)) {
-                System.out.println("iload " + map.getKey());
-                System.out.println("ldc " + value);
-                System.out.println("istore " + map.getKey());
+                if (value.getType() == 0) {
+                    System.out.println("aload " + map.getKey());
+                    System.out.println("ldc " + value);
+                    System.out.println("astore " + map.getKey());
+                } else if (value.getType() == 2) {
+                    System.out.println("iload " + map.getKey());
+                    System.out.println("ldc " + value);
+                    System.out.println("istore " + map.getKey());
+                }
             }
         }
 
@@ -119,7 +128,7 @@ public class Builder extends natoBaseVisitor<Type>{
         System.out.println("iftrue" + iflabelCounter);
         System.out.println("default : iftrue" + iflabelCounter);
         System.out.println("iffalse" + iflabelCounter + ":");
-        if(ctx.elseCode != null){
+        if (ctx.elseCode != null) {
             visit(ctx.elseCode);
         }
         System.out.println("goto endif" + iflabelCounter);
@@ -157,7 +166,7 @@ public class Builder extends natoBaseVisitor<Type>{
         System.out.println("whilefalse" + whilelabelCounter + ":");
         System.out.println("goto endwhile" + whilelabelCounter);
         System.out.println("whiletrue" + whilelabelCounter + ":");
-        for (natoParser.StatementContext context : ctx.statement()){
+        for (natoParser.StatementContext context : ctx.statement()) {
             visit(context);
         }
         System.out.println("goto beginwhile" + whilelabelCounter);
@@ -222,9 +231,9 @@ public class Builder extends natoBaseVisitor<Type>{
         visit(ctx.leftExpr);
         visit(ctx.rightExpr);
 
-        if (ctx.op.getText().equals("*")){
+        if (ctx.op.getText().equals("*")) {
             System.out.println("imul");
-        } else if (ctx.op.getText().equals("/")){
+        } else if (ctx.op.getText().equals("/")) {
             System.out.println("idiv");
         }
 
@@ -246,9 +255,9 @@ public class Builder extends natoBaseVisitor<Type>{
         visit(ctx.leftExpr);
         visit(ctx.rightExpr);
 
-        if (ctx.op.getText().equals("+")){
+        if (ctx.op.getText().equals("+")) {
             System.out.println("iadd");
-        } else if (ctx.op.getText().equals("-")){
+        } else if (ctx.op.getText().equals("-")) {
             System.out.println("isub");
         }
 
@@ -285,28 +294,28 @@ public class Builder extends natoBaseVisitor<Type>{
         //if_icmpTYPE
         //TYPE EQ = == NE = != GT = > GE = >= LT = < LE <=
 
-        if(ctx.op.getText().equals("<")){
+        if (ctx.op.getText().equals("<")) {
             System.out.println("if_icmplt then" + logicalexpressionlabelCounter);
-        } else if(ctx.op.getText().equals("<=")) {
+        } else if (ctx.op.getText().equals("<=")) {
             System.out.println("if_icmple then" + logicalexpressionlabelCounter);
-        } else if(ctx.op.getText().equals("=")) {
+        } else if (ctx.op.getText().equals("=")) {
             System.out.println("if_icmpeq then" + logicalexpressionlabelCounter);
-        } else if(ctx.op.getText().equals(">=")) {
+        } else if (ctx.op.getText().equals(">=")) {
             System.out.println("if_icmpge then" + logicalexpressionlabelCounter);
-        } else if(ctx.op.getText().equals(">")){
+        } else if (ctx.op.getText().equals(">")) {
             System.out.println("if_icmpgt then" + logicalexpressionlabelCounter);
         }
 
 
         System.out.println("else" + logicalexpressionlabelCounter + ":");
-        if(ctx.not != null){
+        if (ctx.not != null) {
             System.out.println("ldc 1");
         } else {
             System.out.println("ldc 0");
         }
         System.out.println("goto endlogicalexpression" + logicalexpressionlabelCounter);
         System.out.println("then" + logicalexpressionlabelCounter + ":");
-        if(ctx.not != null){
+        if (ctx.not != null) {
             System.out.println("ldc 0");
         } else {
             System.out.println("ldc 1");
@@ -331,8 +340,6 @@ public class Builder extends natoBaseVisitor<Type>{
         //... got something else
 
 
-
-
         return null;
     }
 
@@ -340,7 +347,6 @@ public class Builder extends natoBaseVisitor<Type>{
     public Type visitOrLogicalExpression(natoParser.OrLogicalExpressionContext ctx) {
         visit(ctx.leftLogicalExpr);
         visit(ctx.rightLogicalExpr);
-
 
 
         return null;
