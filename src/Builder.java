@@ -7,8 +7,11 @@ import java.util.Objects;
  */
 public class Builder extends natoBaseVisitor<Type>{
 
-    private int labelCounter = 0;
+    private int whilelabelCounter = 0;
+    private int iflabelCounter = 0;
+    private int logicalexpressionlabelCounter = 0;
     private HashMap<Integer, DataType> frameStorage = new HashMap<>();
+
 
     @Override
     public Type visitProgram(natoParser.ProgramContext ctx) {
@@ -53,11 +56,14 @@ public class Builder extends natoBaseVisitor<Type>{
 
         if (value != null) {
             System.out.println("ldc " + value);
+            System.out.println("istore " + (frameStorage.size() + 1));
+        } else {
+            System.out.println("ldc 0");
+            System.out.println("istore " + (frameStorage.size() + 1));
         }
-        System.out.println("astore " + frameStorage.size());
-        frameStorage.put(frameStorage.size(), name);
+        frameStorage.put((frameStorage.size() + 1), name);
 
-        return super.visitVarDecAndInit(ctx);
+        return null;
     }
 
     @Override
@@ -68,13 +74,13 @@ public class Builder extends natoBaseVisitor<Type>{
 
         for (Map.Entry<Integer, DataType> map : frameStorage.entrySet()) {
             if (Objects.equals(map, name)) {
-                System.out.println("aload " + map.getKey());
+                System.out.println("iload " + map.getKey());
                 System.out.println("ldc " + value);
-                System.out.println("astore " + map.getKey());
+                System.out.println("istore " + map.getKey());
             }
         }
 
-        return super.visitVarAssignment(ctx);
+        return null;
     }
 
     @Override
@@ -109,18 +115,18 @@ public class Builder extends natoBaseVisitor<Type>{
         visit(ctx.logicalExpression());
 
         System.out.println("tableswitch 0");
-        System.out.println("false" + labelCounter);
-        System.out.println("true" + labelCounter);
-        System.out.println("default : true" + labelCounter);
-        System.out.println("false" + labelCounter + ":");
+        System.out.println("iffalse" + iflabelCounter);
+        System.out.println("iftrue" + iflabelCounter);
+        System.out.println("default : iftrue" + iflabelCounter);
+        System.out.println("iffalse" + iflabelCounter + ":");
         if(ctx.elseCode != null){
             visit(ctx.elseCode);
         }
-        System.out.println("goto endif" + labelCounter);
-        System.out.println("true" + labelCounter + ":");
+        System.out.println("goto endif" + iflabelCounter);
+        System.out.println("iftrue" + iflabelCounter + ":");
         visit(ctx.ifCode);
-        System.out.println("endif" + labelCounter + ":");
-        labelCounter++;
+        System.out.println("endif" + iflabelCounter + ":");
+        iflabelCounter++;
 
         //tableswitch 0
         //Label1
@@ -141,6 +147,23 @@ public class Builder extends natoBaseVisitor<Type>{
 
     @Override
     public Type visitWhileStmt(natoParser.WhileStmtContext ctx) {
+
+        System.out.println("beginwhile" + whilelabelCounter + ":");
+        visit(ctx.logicalExpression());
+        System.out.println("tableswitch 0");
+        System.out.println("whilefalse" + whilelabelCounter);
+        System.out.println("whiletrue" + whilelabelCounter);
+        System.out.println("default : whiletrue" + whilelabelCounter);
+        System.out.println("whilefalse" + whilelabelCounter + ":");
+        System.out.println("goto endwhile" + whilelabelCounter);
+        System.out.println("whiletrue" + whilelabelCounter + ":");
+        for (natoParser.StatementContext context : ctx.statement()){
+            visit(context);
+        }
+        System.out.println("goto beginwhile" + whilelabelCounter);
+        System.out.println("endwhile" + whilelabelCounter + ":");
+        whilelabelCounter++;
+
         return null;
     }
 
@@ -263,34 +286,34 @@ public class Builder extends natoBaseVisitor<Type>{
         //TYPE EQ = == NE = != GT = > GE = >= LT = < LE <=
 
         if(ctx.op.getText().equals("<")){
-            System.out.println("if_icmplt then" + labelCounter);
+            System.out.println("if_icmplt then" + logicalexpressionlabelCounter);
         } else if(ctx.op.getText().equals("<=")) {
-            System.out.println("if_icmple then" + labelCounter);
+            System.out.println("if_icmple then" + logicalexpressionlabelCounter);
         } else if(ctx.op.getText().equals("=")) {
-            System.out.println("if_icmpeq then" + labelCounter);
+            System.out.println("if_icmpeq then" + logicalexpressionlabelCounter);
         } else if(ctx.op.getText().equals(">=")) {
-            System.out.println("if_icmpge then" + labelCounter);
+            System.out.println("if_icmpge then" + logicalexpressionlabelCounter);
         } else if(ctx.op.getText().equals(">")){
-            System.out.println("if_icmpgt then" + labelCounter);
+            System.out.println("if_icmpgt then" + logicalexpressionlabelCounter);
         }
 
 
-        System.out.println("else" + labelCounter + ":");
+        System.out.println("else" + logicalexpressionlabelCounter + ":");
         if(ctx.not != null){
             System.out.println("ldc 1");
         } else {
             System.out.println("ldc 0");
         }
-        System.out.println("goto endif" + labelCounter);
-        System.out.println("then" + labelCounter + ":");
+        System.out.println("goto endlogicalexpression" + logicalexpressionlabelCounter);
+        System.out.println("then" + logicalexpressionlabelCounter + ":");
         if(ctx.not != null){
             System.out.println("ldc 0");
         } else {
             System.out.println("ldc 1");
         }
-        System.out.println("endif" + labelCounter + ":");
+        System.out.println("endlogicalexpression" + logicalexpressionlabelCounter + ":");
 
-        labelCounter++;
+        logicalexpressionlabelCounter++;
 
 
         //tableswitch 0
