@@ -62,7 +62,7 @@ public class Builder extends natoBaseVisitor<Type> {
                 System.out.println("istore " + (frameStorage.size() + 1));
             }
         } else {
-            System.out.println("ldc 0");
+            //System.out.println("ldc 0");
             System.out.println("istore " + (frameStorage.size() + 1));
         }
         frameStorage.put((frameStorage.size() + 1), name);
@@ -78,11 +78,11 @@ public class Builder extends natoBaseVisitor<Type> {
         for (Map.Entry<Integer, DataType> map : frameStorage.entrySet()) {
             if (Objects.equals(map, name)) {
                 if (value.getType() == 0) {
-                    System.out.println("aload " + map.getKey());
+                    //System.out.println("aload " + map.getKey());
                     System.out.println("ldc " + value);
                     System.out.println("astore " + map.getKey());
                 } else if (value.getType() == 2) {
-                    System.out.println("iload " + map.getKey());
+                    //System.out.println("iload " + map.getKey());
                     System.out.println("ldc " + value);
                     System.out.println("istore " + map.getKey());
                 }

@@ -1,33 +1,11 @@
 this is program over
+falcon vier <- 4 over
+execute all before 1 < 2 over
+
+    falcon testy <- 1 - 2 over
+    say whileloop over
+endExecute over
 
 
-
-verify 2 < 3 over
-    say twosmallerthree over
-endVerify over
-
-verify 1 < 2 OR 2 !< 3 over
-    say orthingy over
-endVerify over
-
-verify 2 > 3 over
-    say twobiggerthree over
-endVerify over
-
-falcon vier <- 8 over
-vier <- vier - 2 over
-
-operation mango falcon variablenameone message twelve over
-    say nothing and more over
-    say testirone over
-    payload is message TRUE over
-endOperation over
-
-start operation mango over
-
-falcon test <- 5 over
-verify test > 1 over
-    say test over
-endVerify over
 
 over and out

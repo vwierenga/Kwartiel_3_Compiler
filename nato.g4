@@ -3,7 +3,7 @@ grammar nato;
 program: 'this is ' MESSAGE ENDL (statement ENDL)+ 'over and out';
 
 statement: 'say ' MESSAGE+                      #printStatement
-           | type MESSAGE ('<-' expr=expression+)?   #varDecAndInit
+           | type MESSAGE ('<-' expr=expression)?   #varDecAndInit
            | MESSAGE '<-' expr=expression+           #varAssignment
            | ifStmt                             #ifStatement
            | whileStmt                          #whileStatement
